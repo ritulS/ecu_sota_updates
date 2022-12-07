@@ -33,3 +33,8 @@ def parse_args(args: list[str]):
     print(iD, data)
 
     return iD, data
+
+def get_file_contents(file_name: str):
+    with open(file_name, 'rb') as f:
+        return f.read()
+
