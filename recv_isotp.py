@@ -17,8 +17,19 @@ class ThreadedApp:
     def __init__(self):
         self.exit_requested = False
         self.bus = can.Bus()
-        addr = isotp.Address(isotp.AddressingMode.Normal_11bits, rxid=0x456, txid=0x123)
-        self.stack = isotp.CanStack(self.bus, address=addr, error_handler=self.error_handler)
+        addr = isotp.Address(
+                isotp.AddressingMode.Normal_11bits,
+                rxid=0x456,
+                txid=0x123,
+            )
+        self.stack = isotp.CanStack(
+                self.bus,
+                address=addr,
+                error_handler=self.error_handler,
+                params={
+                    "max_frame_size": 2097152
+                }
+            )
 
     def start(self):
         self.exit_requested = False
@@ -47,13 +58,15 @@ if __name__ == "__main__":
     with Ip_link() as ip_link:
         app = ThreadedApp()
         app.start()
+
         try:
             print("LISTENING")
-            # t1 = time.time()
+
             while True:
                 if app.stack.available():
                     payload = app.stack.recv()
                     print("Received payload: %s" % (payload))
+
                     continue
                 time.sleep(0.2)
 
