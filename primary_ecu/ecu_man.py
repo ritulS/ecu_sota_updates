@@ -24,32 +24,30 @@ class ecu_input:
         self.file_name =  file_name
         pass
 
-    def _load_file(self, file_name):
-        #file = 'file'
-        #final output => byte array
-        pass
+    def _load_file(self, file_name: str) -> bytes:
+        with open(file_name, "rb") as file:
+            return file.read()
 
     def _hash_and_sign(self):
         img_byte_str = self._load_file("./file.bin")
         key = b'ecuKey' #Use the hardcoded key here
-        img_hash = SHA512.new(img_byte_str)
-        cipher = AES.new(key, AES.MODE_EAX)
+        hash = SHA512.new()
+        hash.update(img_byte_str)
+        img_hash = hash.digest()
 
-        nonce = cipher.nonce
+
+        cipher = AES.new(key, AES.MODE_EAX)
         cipher_text, tag = cipher.encrypt_and_digest(img_hash)
 
         return cipher_text, tag 
 
 
     def gen_ecu_manifest(self) -> ecu_manifest:
-        cipher_text, tag = self._hash_and_sign(img_byte_str=self._load_file())
-        
+        cipher_text, tag = self._hash_and_sign()
+
         return  ecu_manifest(
             cipher_text= cipher_text,
             sr_num = "harcoded",
             tag = tag
         )
         # return manifest
-        
-        
-        
