@@ -14,13 +14,12 @@ class prim_ecu:
     sym_key: str
     img_hash: str
 
-
-    def req_ecu_man(self):
+    def request_ecu_man(self):
         pass
 
     def receive_ecu_man(self):
         pass
-    
+
     def gen_vvm(self):
         pass
 

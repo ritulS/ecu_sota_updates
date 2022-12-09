@@ -8,6 +8,8 @@
 from dataclasses import dataclass
 from Crypto.Hash import SHA512
 from Crypto.Cipher import AES
+# from Crypto.Cipher._mode_eax import EaxMode
+from typing import Any, Tuple
 
 @dataclass
 class ecu_manifest:
@@ -28,7 +30,7 @@ class ecu_input:
         with open(file_name, "rb") as file:
             return file.read()
 
-    def _hash_and_sign(self):
+    def _hash_and_sign(self) -> Tuple[ bytes, bytes ]:
         img_byte_str = self._load_file("./file.bin")
         key = b'ecuKey' #Use the hardcoded key here
         hash = SHA512.new()
@@ -36,7 +38,8 @@ class ecu_input:
         img_hash = hash.digest()
 
 
-        cipher = AES.new(key, AES.MODE_EAX)
+        cipher: Any = AES.new(key, AES.MODE_EAX)
+        # if isinstance(cipher, EaxMode):
         cipher_text, tag = cipher.encrypt_and_digest(img_hash)
 
         return cipher_text, tag 
