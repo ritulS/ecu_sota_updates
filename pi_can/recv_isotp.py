@@ -7,20 +7,25 @@ import can
 import isotp
 
 from ip_link import Ip_link
+import json
 
 
 can.rc['interface'] = "socketcan"
 can.rc['channel'] = "can0"
 can.rc['bitrate'] = 500000
 
+# CANID: 0x789
 class ThreadedApp:
     def __init__(self):
+        self.get_can_id()
+        self.id = self.get_can_id()
+        self.ecu_id = 0x123
         self.exit_requested = False
         self.bus = can.Bus()
         addr = isotp.Address(
                 isotp.AddressingMode.Normal_11bits,
-                rxid=0x456,
-                txid=0x123,
+                rxid=self.id,
+                txid=self.ecu_id,
             )
         self.stack = isotp.CanStack(
                 self.bus,
@@ -30,6 +35,13 @@ class ThreadedApp:
                     "max_frame_size": 2097152
                 }
             )
+    def get_can_id(self) -> int:
+        with open("/home/pi/ecu_info.json") as _file:
+            f = _file.read()
+            info = json.loads(f)
+
+            # print(int(info['can_id'], 16))
+            return int(info['can_id'], 16)
 
     def start(self):
         self.exit_requested = False
@@ -54,7 +66,8 @@ class ThreadedApp:
         self.bus.shutdown()
 
 
-if __name__ == "__main__":
+
+def main():
     with Ip_link() as ip_link:
         app = ThreadedApp()
         app.start()
@@ -66,6 +79,7 @@ if __name__ == "__main__":
                 if app.stack.available():
                     payload = app.stack.recv()
                     print("Received payload: %s" % (payload))
+                    # print(payload.decode("utf-8"))
 
                     continue
                 time.sleep(0.2)
@@ -75,3 +89,8 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             print("KI, exiting")
             app.shutdown()
+
+
+if __name__ == "__main__":
+    main()
+    # app = ThreadedApp()
