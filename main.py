@@ -11,7 +11,11 @@ def main():
     cipher: Any = AES.new(key, AES.MODE_EAX, nonce=manifest.nonce)
 
     if isinstance(cipher, EaxMode):
-        cipher.decrypt_and_verify(manifest.cipher_text, received_mac_tag=manifest.tag)
+        try:
+            cipher.decrypt_and_verify(manifest.cipher_text, received_mac_tag=manifest.tag)
+        except:
+            print("MAC does not match. The message has been tampered with or the key is incorrect.")
 
 if __name__ == "__main__":
     main()
+
