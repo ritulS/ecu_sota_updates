@@ -137,5 +137,5 @@ def listen_everything():
 
 
 if __name__ == "__main__":
-    listen_for_data(b'send data bitches', send_data)
+    listen_for_data(b'send data bitches', send_manifest)
 
