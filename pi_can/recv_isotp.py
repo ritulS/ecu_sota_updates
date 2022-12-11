@@ -66,6 +66,27 @@ class ThreadedListen:
         self.bus.shutdown()
 
 
+def receive_request_ecu_man():
+    with Ip_link() as ip_link:
+        app = ThreadedListen()
+        app.start()
+
+        try:
+            print("LISTENING")
+
+            while True:
+                if app.stack.available():
+                    payload = app.stack.recv()
+                    print("Received payload: %s" % (payload))
+                    if payload == b'send data bitches':
+                        break
+                time.sleep(0.2)
+
+            print("EXITING")
+            app.shutdown()
+        except KeyboardInterrupt:
+            print("KI, exiting")
+            app.shutdown()
 
 def listen_everything():
     with Ip_link() as ip_link:
@@ -92,4 +113,4 @@ def listen_everything():
 
 
 if __name__ == "__main__":
-    listen_everything()
+    receive_request_ecu_man()
