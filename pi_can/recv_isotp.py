@@ -2,12 +2,12 @@ import sys
 import time
 import logging
 import threading
+import json
 
 import can
 import isotp
 
 from ip_link import Ip_link
-import json
 
 
 can.rc['interface'] = "socketcan"
