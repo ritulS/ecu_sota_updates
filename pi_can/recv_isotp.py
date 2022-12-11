@@ -68,22 +68,7 @@ class ThreadedListen:
 def error_handler(error):
     logging.warning("IsoTp error: %s - %s" % (error.__class__.__name__, str(error)))
 
-def send_manifest():
-    with can.Bus() as bus:
-        addr = isotp.Address(
-                isotp.AddressingMode.Normal_11bits,
-                txid=0x123,
-                rxid=0x789
-        )
-        stack = isotp.CanStack(
-                bas,
-                address = addr,
-                error_handler=error_handler
-        )
-
-        stack.send(b'jsonfile')
-
-def listen_recv_info():
+def receive_request_ecu_man():
     with Ip_link() as ip_link:
         app = ThreadedListen()
         app.start()
@@ -95,16 +80,12 @@ def listen_recv_info():
                 if app.stack.available():
                     payload = app.stack.recv()
                     print("Received payload: %s" % (payload))
-
                     if payload == b'send data bitches':
                         break
-
                 time.sleep(0.2)
 
             print("EXITING")
             app.shutdown()
-
-            send_manifest()
         except KeyboardInterrupt:
             print("KI, exiting")
             app.shutdown()
@@ -134,4 +115,4 @@ def listen_everything():
 
 
 if __name__ == "__main__":
-    listen_everything()
+    receive_request_ecu_man()
