@@ -38,6 +38,7 @@ import can
 import isotp
 
 from recv_isotp import ThreadedListen
+from recv_isotp import listen_everything, listen_for_data
 
 can.rc['interface'] = "socketcan"
 can.rc['channel'] = "can0"
@@ -68,7 +69,7 @@ class PrimaryECU:
         with can.Bus() as bus:
             addr = isotp.Address(
                     isotp.AddressingMode.Normal_11bits,
-                    txid=0x789,
+                    txid=txid,
                     rxid=self.can_id
             )
             stack = isotp.CanStack(
@@ -87,8 +88,11 @@ class PrimaryECU:
             print(ecu['can_id'])
             self.send_data(ecu["can_id"], data=b'send data bitches')
 
-    def receive_ecu_man(self):
-        pass
+    def on_receive_ecu_manifest(self):
+        print("RECEIVED ECU MANIFEST")
+
+    def receive_ecu_manifest(self, rxid, txid):
+        listen_for_data(b'json_file', self.on_receive_ecu_manifest, rxid = rxid, txid = self.can_id)
 
     def gen_vvm(self):
         pass
@@ -139,5 +143,6 @@ if __name__ == "__main__":
     app.start()
     app.request_ecu_man()
 
+    app.receive_ecu_manifest(rxid = 0x789, txid=0x123)
 
     app.stop()
