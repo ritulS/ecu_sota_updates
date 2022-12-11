@@ -32,15 +32,16 @@ import time
 import subprocess
 import threading
 import sys
+import logging
 
 import can
 import isotp
 
+from recv_isotp import ThreadedListen
+
 can.rc['interface'] = "socketcan"
 can.rc['channel'] = "can0"
 can.rc['bitrate'] = 500000
-
-
 
 class PrimaryECU:
     def __init__(self):
@@ -74,7 +75,6 @@ class PrimaryECU:
                     bus,
                     address = addr,
                     error_handler=self.error_handler
-                    params={ }
             )
             stack.send(data)
 
@@ -140,4 +140,4 @@ if __name__ == "__main__":
     app.request_ecu_man()
 
 
-    # app.stop()
+    app.stop()

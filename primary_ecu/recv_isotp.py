@@ -67,7 +67,7 @@ class ThreadedListen:
 
 
 
-def listen_everything():
+def main():
     with Ip_link() as ip_link:
         app = ThreadedListen()
         app.start()
@@ -92,4 +92,5 @@ def listen_everything():
 
 
 if __name__ == "__main__":
-    listen_everything()
+    main()
+    # app = ThreadedApp()
