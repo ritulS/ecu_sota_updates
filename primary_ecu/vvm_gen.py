@@ -12,14 +12,12 @@
         ecu1: {
         signed: { image_hash: "hash"},
         ecu_name: "",
-        signature: "dafkljlj",
         nonce: nonce,
         tag: tag,
         cipher_text: cipher_text
         },
         ecu2: {
         signed: {image_hash: "hash"},
-        signature: "dafkljlj"
         nonce: nonce,
         tag: tag,
         cipher_text: cipher_text
@@ -59,9 +57,6 @@ class PrimaryECU:
             },
         ]
 
-    def get_params(self):
-        pass
-
     def error_handler(self, error):
         logging.warning("IsoTp error: %s - %s" % (error.__class__.__name__, str(error)))
 
@@ -84,15 +79,17 @@ class PrimaryECU:
                 time.sleep(stack.sleep_time())
 
     def request_ecu_man(self):
+        print("[PRIMARY] SEND REQUEST FOR ECU MANIFEST")
         for ecu in self.ecu_info:
-            print(ecu['can_id'])
+            print("[PRIMARY] REQUEST SENT TO ECU ID: ", ecu['can_id'])
             self.send_data(ecu["can_id"], data=b'send data bitches')
 
     def on_receive_ecu_manifest(self):
         print("RECEIVED ECU MANIFEST")
 
     def receive_ecu_manifest(self, rxid, txid):
-        listen_for_data(b'json_file', self.on_receive_ecu_manifest, rxid = rxid, txid = self.can_id)
+        print("WATING FOR MANIFEST FROM ECUS")
+        listen_for_data(b'jsonfile', self.on_receive_ecu_manifest, rxid = rxid, txid = txid)
 
     def gen_vvm(self):
         pass
@@ -143,6 +140,6 @@ if __name__ == "__main__":
     app.start()
     app.request_ecu_man()
 
-    app.receive_ecu_manifest(rxid = 0x789, txid=0x123)
+    app.receive_ecu_manifest(rxid = 0x123, txid=0x789)
 
     app.stop()

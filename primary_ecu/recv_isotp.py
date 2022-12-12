@@ -77,12 +77,16 @@ def send_manifest():
                 rxid=0x789
         )
         stack = isotp.CanStack(
-                bas,
+                bus,
                 address = addr,
                 error_handler=error_handler
         )
 
         stack.send(b'jsonfile')
+
+        with stack.transmitting():
+            stack.process()
+            time.sleep(stack.sleep_time())
 
 def listen_for_data(data, callbackFn = None, txid = None, rxid = None):
     with Ip_link() as ip_link:
@@ -90,10 +94,11 @@ def listen_for_data(data, callbackFn = None, txid = None, rxid = None):
         app.start()
 
         try:
-            print("LISTENING")
+            print("LISTENING...")
 
             while True:
                 if app.stack.available():
+                    print("avail")
                     payload = app.stack.recv()
                     print("Received payload: %s" % (payload))
 
@@ -105,12 +110,15 @@ def listen_for_data(data, callbackFn = None, txid = None, rxid = None):
             print("EXITING")
             app.shutdown()
 
-            if canbackFn:
+            if callbackFn:
                 callbackFn()
 
         except KeyboardInterrupt:
             print("KI, exiting")
             app.shutdown()
+
+        if callbackFn:
+            callbackFn()
 
 def listen_everything():
     with Ip_link() as ip_link:

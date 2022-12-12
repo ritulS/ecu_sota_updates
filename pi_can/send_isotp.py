@@ -41,7 +41,6 @@ def send_msg(txid = 0x123):
                         "max_frame_size": 2097152
                     }
                 )
-            # stack.send(b'this is a realllllly lllllooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong payload')
             stack.send(_data)
 
             while stack.transmitting():
