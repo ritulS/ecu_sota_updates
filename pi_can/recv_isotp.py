@@ -16,10 +16,9 @@ can.rc['bitrate'] = 500000
 
 # CANID: 0x789
 class ThreadedListen:
-    def __init__(self):
-        self.get_can_id()
-        self.id = self.get_can_id()
-        self.ecu_id = 0x123
+    def __init__(self, rxid = None, txid = None):
+        self.id = rxid if rxid else 0x123
+        self.ecu_id = txid if txid else 0x456
         self.exit_requested = False
         self.bus = can.Bus()
         addr = isotp.Address(
@@ -92,7 +91,7 @@ def receive_request_ecu_man():
 
 def listen_everything():
     with Ip_link() as ip_link:
-        app = ThreadedListen()
+        app = ThreadedListen(rxid = 0x123, txid = 0x456)
         app.start()
 
         try:

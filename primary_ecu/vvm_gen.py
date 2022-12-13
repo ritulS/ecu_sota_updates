@@ -140,6 +140,6 @@ if __name__ == "__main__":
     app.start()
     app.request_ecu_man()
 
-    app.receive_ecu_manifest(rxid = 0x123, txid=0x789)
+    app.receive_ecu_manifest(rxid = 0x123, txid = 0x456)
 
     app.stop()

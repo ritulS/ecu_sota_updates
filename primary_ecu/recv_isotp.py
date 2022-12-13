@@ -18,7 +18,6 @@ can.rc['bitrate'] = 500000
 class ThreadedListen:
     def __init__(self, rxid = None, txid = None):
         print("From threaded", rxid, txid)
-        # self.get_can_id()
         self.id = rxid if rxid else self.get_can_id()
         self.txid = txid if txid else 0x123
         self.exit_requested = False
@@ -70,11 +69,12 @@ def error_handler(error):
     logging.warning("IsoTp error: %s - %s" % (error.__class__.__name__, str(error)))
 
 def send_manifest():
+    print("CALLBACK")
     with can.Bus() as bus:
         addr = isotp.Address(
                 isotp.AddressingMode.Normal_11bits,
-                txid=0x123,
-                rxid=0x789
+                txid=0x456,
+                rxid=0x123
         )
         stack = isotp.CanStack(
                 bus,
@@ -84,7 +84,7 @@ def send_manifest():
 
         stack.send(b'jsonfile')
 
-        with stack.transmitting():
+        if stack.transmitting():
             stack.process()
             time.sleep(stack.sleep_time())
 
@@ -109,6 +109,7 @@ def listen_for_data(data, callbackFn = None, txid = None, rxid = None):
 
             print("EXITING")
             app.shutdown()
+            time.sleep(0.2)
 
             if callbackFn:
                 callbackFn()
@@ -116,9 +117,6 @@ def listen_for_data(data, callbackFn = None, txid = None, rxid = None):
         except KeyboardInterrupt:
             print("KI, exiting")
             app.shutdown()
-
-        if callbackFn:
-            callbackFn()
 
 def listen_everything():
     with Ip_link() as ip_link:
