@@ -22,12 +22,12 @@ def get_ecu_can_id():
 def error_handler(error):
     logging.warning("IsoTp error: %s - %s" % (error.__class__.__name__, str(error)))
 
-def send_msg(txid = 0x123):
+def send_msg(txid = 0x123, rxid = 0x456):
     with Ip_link() as ip_link:
         with can.Bus() as bus:
             addr = isotp.Address(
                     isotp.AddressingMode.Normal_11bits,
-                    rxid=0x123,
+                    rxid=rxid,
                     txid=txid,
                 )
 
@@ -48,7 +48,7 @@ def send_msg(txid = 0x123):
                 time.sleep(stack.sleep_time())
 
 def main():
-    send_msg(txid=0x789)
+    send_msg()
 
 if __name__ == "__main__":
     main()
