@@ -82,7 +82,7 @@ class PrimaryECU:
         print("[PRIMARY] SEND REQUEST FOR ECU MANIFEST")
         for ecu in self.ecu_info:
             print("[PRIMARY] REQUEST SENT TO ECU ID: ", ecu['can_id'])
-            self.send_data(ecu["can_id"], data=b'send data bitches')
+            self.send_data(ecu["can_id"], data=b'send_ecu_data')
 
     def on_receive_ecu_manifest(self):
         print("RECEIVED ECU MANIFEST")

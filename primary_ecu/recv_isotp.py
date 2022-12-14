@@ -30,7 +30,7 @@ class ThreadedListen:
         self.stack = isotp.CanStack(
                 self.bus,
                 address=addr,
-                error_handler=self.error_handler,
+                error_handler=error_handler,
                 params={
                     "max_frame_size": 2097152
                 }
@@ -58,35 +58,12 @@ class ThreadedListen:
         if self.thread.is_alive():
             self.thread.join()
 
-    def error_handler(self, error):
-        logging.warning("IsoTp error happened: %s - %s" % (error.__class__.__name__, str(error)))
-
     def shutdown(self):
         self.stop()
         self.bus.shutdown()
 
 def error_handler(error):
     logging.warning("IsoTp error: %s - %s" % (error.__class__.__name__, str(error)))
-
-def send_manifest():
-    print("CALLBACK")
-    with can.Bus() as bus:
-        addr = isotp.Address(
-                isotp.AddressingMode.Normal_11bits,
-                txid=0x456,
-                rxid=0x123
-        )
-        stack = isotp.CanStack(
-                bus,
-                address = addr,
-                error_handler=error_handler
-        )
-
-        stack.send(b'jsonfile')
-
-        if stack.transmitting():
-            stack.process()
-            time.sleep(stack.sleep_time())
 
 def listen_for_data(data, callbackFn = None, txid = None, rxid = None):
     with Ip_link() as ip_link:
@@ -140,8 +117,4 @@ def listen_everything():
         except KeyboardInterrupt:
             print("KI, exiting")
             app.shutdown()
-
-
-if __name__ == "__main__":
-    listen_for_data(b'send data bitches', send_manifest)
 
