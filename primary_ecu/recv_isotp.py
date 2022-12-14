@@ -57,7 +57,7 @@ class ThreadedListen:
 def error_handler(error):
     logging.warning("IsoTp error: %s - %s" % (error.__class__.__name__, str(error)))
 
-def listen_for_data(data, callbackFn = None, txid = None, rxid = None):
+def listen_for_data(data, txid, rxid, callbackFn = None):
     with Ip_link() as ip_link:
         app = ThreadedListen(txid = txid, rxid = rxid)
         app.start()
@@ -78,7 +78,7 @@ def listen_for_data(data, callbackFn = None, txid = None, rxid = None):
 
             print("EXITING")
             app.shutdown()
-            time.sleep(0.2)
+            time.sleep(5)
 
             if callbackFn:
                 callbackFn()
