@@ -129,10 +129,19 @@ class PrimaryECU:
 
     def receive_ecu_manifest(self, rxid, txid):
         print("WATING FOR MANIFEST FROM ECUS")
-        listen_for_data(b'jsonfile', self.on_receive_ecu_manifest, rxid = rxid, txid = txid)
+        listen_for_data(
+            b'jsonfile',
+            self.on_receive_ecu_manifest,
+            rxid = rxid,
+            txid = txid
+        )
 
     def gen_vvm(self):
         pass
+
+def on_receive_ecu_manifest():
+    print("RECEIVED ECU MANIFEST")
+
 
 if __name__ == "__main__":
     app = PrimaryECU()
@@ -140,6 +149,13 @@ if __name__ == "__main__":
     app.start()
     app.request_ecu_man()
 
-    app.receive_ecu_manifest(rxid = 0x123, txid = 0x456)
-
     app.stop()
+
+    print("WATING FOR MANIFEST FROM ECUS")
+
+    listen_for_data(
+        data = b'jsonfile',
+        callbackFn = on_receive_ecu_manifest,
+        rxid = 0x123,
+        txid = 0x456
+    )
