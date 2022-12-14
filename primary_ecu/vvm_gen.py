@@ -57,43 +57,6 @@ class PrimaryECU:
             },
         ]
 
-    def error_handler(self, error):
-        logging.warning("IsoTp error: %s - %s" % (error.__class__.__name__, str(error)))
-
-    def send_data(self, txid, data):
-        with can.Bus() as bus:
-            addr = isotp.Address(
-                    isotp.AddressingMode.Normal_11bits,
-                    txid=txid,
-                    rxid=self.can_id
-            )
-            stack = isotp.CanStack(
-                    bus,
-                    address = addr,
-                    error_handler=self.error_handler
-            )
-            stack.send(data)
-
-            while stack.transmitting():
-                stack.process()
-                time.sleep(stack.sleep_time())
-
-    def request_ecu_man(self):
-        print("[PRIMARY] SEND REQUEST FOR ECU MANIFEST")
-        for ecu in self.ecu_info:
-            print("[PRIMARY] REQUEST SENT TO ECU ID: ", ecu['can_id'])
-            self.send_data(ecu["can_id"], data=b'send_ecu_data')
-
-    def on_receive_ecu_manifest(self):
-        print("RECEIVED ECU MANIFEST")
-
-    def receive_ecu_manifest(self, rxid, txid):
-        print("WATING FOR MANIFEST FROM ECUS")
-        listen_for_data(b'jsonfile', self.on_receive_ecu_manifest, rxid = rxid, txid = txid)
-
-    def gen_vvm(self):
-        pass
-
     def start(self):
         print(" --- Setting can0 --- ")
 
@@ -133,6 +96,43 @@ class PrimaryECU:
         print(" --- Done setting can0 down --- \n\n")
         time.sleep(0.1)
 
+
+    def error_handler(self, error):
+        logging.warning("IsoTp error: %s - %s" % (error.__class__.__name__, str(error)))
+
+    def send_data(self, txid, data):
+        with can.Bus() as bus:
+            addr = isotp.Address(
+                    isotp.AddressingMode.Normal_11bits,
+                    txid=txid,
+                    rxid=self.can_id
+            )
+            stack = isotp.CanStack(
+                    bus,
+                    address = addr,
+                    error_handler=self.error_handler
+            )
+            stack.send(data)
+
+            while stack.transmitting():
+                stack.process()
+                time.sleep(stack.sleep_time())
+
+    def request_ecu_man(self):
+        print("[PRIMARY] SEND REQUEST FOR ECU MANIFEST")
+        for ecu in self.ecu_info:
+            print("[PRIMARY] REQUEST SENT TO ECU ID: ", ecu['can_id'])
+            self.send_data(ecu["can_id"], data=b'send_ecu_data')
+
+    def on_receive_ecu_manifest(self):
+        print("RECEIVED ECU MANIFEST")
+
+    def receive_ecu_manifest(self, rxid, txid):
+        print("WATING FOR MANIFEST FROM ECUS")
+        listen_for_data(b'jsonfile', self.on_receive_ecu_manifest, rxid = rxid, txid = txid)
+
+    def gen_vvm(self):
+        pass
 
 if __name__ == "__main__":
     app = PrimaryECU()

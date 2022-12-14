@@ -16,10 +16,10 @@ can.rc['bitrate'] = 500000
 
 # CANID: 0x789
 class ThreadedListen:
-    def __init__(self, rxid = None, txid = None):
+    def __init__(self, rxid, txid):
         print("From threaded", rxid, txid)
-        self.id = rxid if rxid else self.get_can_id()
-        self.txid = txid if txid else 0x123
+        self.id = rxid
+        self.txid = txid
         self.exit_requested = False
         self.bus = can.Bus()
         addr = isotp.Address(
@@ -35,14 +35,6 @@ class ThreadedListen:
                     "max_frame_size": 2097152
                 }
             )
-    def get_can_id(self) -> int:
-        with open("/home/pi/ecu_info.json") as _file:
-            f = _file.read()
-            info = json.loads(f)
-
-            # print(int(info['can_id'], 16))
-            return int(info['can_id'], 16)
-
     def start(self):
         self.exit_requested = False
         self.thread = threading.Thread(target = self.thread_task)
