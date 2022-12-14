@@ -4,6 +4,7 @@ import subprocess
 from recv_isotp import listen_for_data_ecu
 
 def main():
+    print("--- [SECONDARY ECU 1110] ---\n\n")
     got_the_msg = listen_for_data_ecu(
         listen_for = b'send_ecu_data',
         rxid = 0x456,

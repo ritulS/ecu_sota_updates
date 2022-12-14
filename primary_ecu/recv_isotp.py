@@ -70,7 +70,7 @@ def listen_for_data(data, txid, rxid, callbackFn = None):
                 if app.stack.available():
                     print("avail")
                     payload = app.stack.recv()
-                    print("Received payload: %s" % (payload))
+                    print("[SECONDARY ECU] RECEIVED PAYLOAD: %s" % (payload))
 
                     if payload == data:
                         break
@@ -94,7 +94,7 @@ def listen_for_data_ecu(listen_for, txid, rxid):
         app.start()
 
         try:
-            print("LISTENING...")
+            print("[SECONDARY ECU] LISTENING...")
 
             while True:
                 if app.stack.available():

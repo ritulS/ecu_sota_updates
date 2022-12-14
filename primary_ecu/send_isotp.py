@@ -25,7 +25,7 @@ def error_handler(error):
     logging.warning("IsoTp error: %s - %s" % (error.__class__.__name__, str(error)))
 
 def send_msg(txid = 0x123, rxid = 0x456):
-    print("[ECU] RECEIVED MANIFEST REQUEST")
+    print("[SECONDARY ECU] RECEIVED MANIFEST REQUEST")
     
     _data = ecu_input("/home/pi/ecu_info.json").gen_ecu_manifest()
     ecu_info = get_ecuinfo()
@@ -62,7 +62,7 @@ def send_msg(txid = 0x123, rxid = 0x456):
             while stack.transmitting():
                 stack.process()
                 time.sleep(stack.sleep_time())
-        print("[ECU] SENT MAINFEST DATA TO PRIMARY")
+        print("[SECONDARY ECU] SENT MAINFEST DATA TO PRIMARY")
 
 def main():
     send_msg()
