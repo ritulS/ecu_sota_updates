@@ -32,7 +32,8 @@ class ThreadedListen:
                 address=addr,
                 error_handler=error_handler,
                 params={
-                    "max_frame_size": 2097152
+                    "max_frame_size": 2097152,
+                    "rx_consecutive_frame_timeout": 2000,
                 }
             )
     def start(self):
