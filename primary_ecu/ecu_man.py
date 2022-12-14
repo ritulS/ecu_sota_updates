@@ -21,6 +21,7 @@ class ecu_manifest:
 class ecu_input:
     def __init__(self, file_name: str) -> None:
         self.file_name =  file_name
+        
 
     def _load_file(self) -> bytes:
         with open(self.file_name, "rb") as file:
@@ -56,3 +57,7 @@ class ecu_input:
             tag = tag
         )
         # return manifest
+
+if __name__ == "__main__":
+    man = ecu_input("/home/pi/ecu_info.json").gen_ecu_manifest()
+    print(man.cipher_text)
