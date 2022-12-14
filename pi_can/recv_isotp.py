@@ -67,7 +67,7 @@ class ThreadedListen:
 def error_handler(error):
     logging.warning("IsoTp error: %s - %s" % (error.__class__.__name__, str(error)))
 
-def receive_request_ecu_man():
+def main():
     with Ip_link() as ip_link:
         app = ThreadedListen()
         app.start()
@@ -79,31 +79,7 @@ def receive_request_ecu_man():
                 if app.stack.available():
                     payload = app.stack.recv()
                     print("Received payload: %s" % (payload))
-                    if payload == b'send data bitches':
-                        break
-                time.sleep(0.2)
 
-            print("EXITING")
-            app.shutdown()
-        except KeyboardInterrupt:
-            print("KI, exiting")
-            app.shutdown()
-
-def listen_everything():
-    with Ip_link() as ip_link:
-        app = ThreadedListen(rxid = 0x123, txid = 0x456)
-        app.start()
-
-        try:
-            print("LISTENING")
-
-            while True:
-                if app.stack.available():
-                    payload = app.stack.recv()
-                    print("Received payload: %s" % (payload))
-                    # print(payload.decode("utf-8"))
-
-                    continue
                 time.sleep(0.2)
 
             print("EXITING")
@@ -114,4 +90,4 @@ def listen_everything():
 
 
 if __name__ == "__main__":
-    receive_request_ecu_man()
+    main()
