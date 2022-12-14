@@ -102,7 +102,7 @@ def listen_for_data_ecu(listen_for, txid, rxid):
                     payload = app.stack.recv()
                     print("Received payload: %s" % (payload))
 
-                    if payload == listen_for:
+                    if payload in listen_for:
                         break
 
                 time.sleep(0.2)
