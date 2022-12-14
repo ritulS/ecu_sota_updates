@@ -2,22 +2,16 @@ import sys
 import logging
 import time
 import json
+import os
 
 import isotp
 import can
 
 from ip_link import Ip_link
-from misc import setup_config, parse_args, get_file_contents
 
 can.rc['interface'] = 'socketcan'
 can.rc['channel'] = 'can0'
 can.rc['bitrate'] = 500000
-
-def get_ecu_can_id():
-    with open("/home/pi/cgm_info.json") as _file:
-        f = _file.read()
-        ecu_data = json.loads(f)
-        return ecu_data
 
 def error_handler(error):
     logging.warning("IsoTp error: %s - %s" % (error.__class__.__name__, str(error)))

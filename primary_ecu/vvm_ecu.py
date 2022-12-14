@@ -3,6 +3,7 @@ import time
 import logging
 import threading
 import json
+import subprocess
 
 import can
 import isotp
@@ -51,5 +52,5 @@ if __name__ == "__main__":
     )
     time.sleep(1)
 
-    if got_the_msg:
-        send_manifest()
+    subprocess.run(["python", "/home/pi/ecu_sota_updates/primary_ecu/send_isotp.py"])
+
