@@ -31,7 +31,7 @@ def send_msg(txid = 0x123, rxid = 0x456):
                     txid=txid,
                 )
 
-            _data = get_file_contents("./generate.py")
+            _data = get_file_contents(b"generate.py")
 
             stack = isotp.CanStack(
                     bus,

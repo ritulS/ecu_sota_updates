@@ -9,7 +9,7 @@ import isotp
 
 from ip_link import Ip_link
 from recv_isotp import ThreadedListen
-from recv_isotp import listen_everything, listen_for_data
+from recv_isotp import listen_everything, listen_for_data, listen_for_data_ecu
 
 
 def error_handler(error):
@@ -17,32 +17,39 @@ def error_handler(error):
 
 def send_manifest():
     print("[ECU] RECEIVED MANIFEST REQUEST")
-    with can.Bus() as bus:
-        addr = isotp.Address(
-                isotp.AddressingMode.Normal_11bits,
-                txid=0x123,
-                rxid=0x456
-        )
-        stack = isotp.CanStack(
-                bus,
-                address = addr,
-                error_handler=error_handler,
-                params={
-                    "max_frame_size": 2097152
-                }
-        )
+    with Ip_link() as ip_link:
+        with can.Bus() as bus:
+            addr = isotp.Address(
+                    isotp.AddressingMode.Normal_11bits,
+                    txid=0x123,
+                    rxid=0x456
+            )
+            data = b'jsonfile'
+            stack = isotp.CanStack(
+                    bus,
+                    address = addr,
+                    error_handler=error_handler,
+                    params={
+                        "max_frame_size": 2097152
+                    }
+            )
 
-        stack.send(b'jsonfile')
+            stack.send(data)
 
-        if stack.transmitting():
-            stack.process()
-            time.sleep(stack.sleep_time())
-    print("[ECU] SENT MAINFEST DATA TO PRIMARY")
+            if stack.transmitting():
+                stack.process()
+                print(stack.sleep_time())
+                time.sleep(stack.sleep_time())
+
+        print("[ECU] SENT MAINFEST DATA TO PRIMARY")
 
 if __name__ == "__main__":
-    listen_for_data(
-            data = b'send_ecu_data',
-            rxid = 0x456,
-            txid = 0x123,
-            callbackFn = send_manifest
+    got_the_msg = listen_for_data_ecu(
+        listen_for = b'send_ecu_data',
+        rxid = 0x456,
+        txid = 0x123,
     )
+    time.sleep(1)
+
+    if got_the_msg:
+        send_manifest()

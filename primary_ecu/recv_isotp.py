@@ -87,6 +87,35 @@ def listen_for_data(data, txid, rxid, callbackFn = None):
             print("KI, exiting")
             app.shutdown()
 
+def listen_for_data_ecu(listen_for, txid, rxid):
+    with Ip_link() as ip_link:
+        app = ThreadedListen(txid = txid, rxid = rxid)
+        app.start()
+
+        try:
+            print("LISTENING...")
+
+            while True:
+                if app.stack.available():
+                    print("avail")
+                    payload = app.stack.recv()
+                    print("Received payload: %s" % (payload))
+
+                    if payload == listen_for:
+                        break
+
+                time.sleep(0.2)
+
+            print("EXITING")
+            app.shutdown()
+
+            return True
+
+        except KeyboardInterrupt:
+            print("KI, exiting")
+            app.shutdown()
+            return False
+
 def listen_everything():
     with Ip_link() as ip_link:
         app = ThreadedListen()
