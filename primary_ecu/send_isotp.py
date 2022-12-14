@@ -25,7 +25,7 @@ def send_msg(txid = 0x123, rxid = 0x456):
                     txid=txid,
                 )
 
-            _data = b"generate.py"
+            _data = b"jsonfile"
 
             stack = isotp.CanStack(
                     bus,
